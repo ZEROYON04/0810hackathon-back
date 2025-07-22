@@ -1,0 +1,19 @@
+[project]
+name = "0810hackathon-back"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi",
+    "python-dotenv",
+    "uvicorn[standard]",
+    "sqlalchemy",
+
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+]
