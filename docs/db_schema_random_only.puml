@@ -1,0 +1,13 @@
+@startuml db_schema_random_only
+
+entity "RandomProblem" as RProblem {
+  * random_problem_id: INT
+  --
+  * coordinates: STRING
+  * created_at: DATETIME
+  * completed_at: DATETIME
+  * status: STRING
+  * image_url: STRING
+}
+
+@enduml
