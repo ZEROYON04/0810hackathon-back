@@ -12,9 +12,10 @@ entity "RandomProblem" as RProblem {
   * random_problem_id: INT
   --
   - user_id: INT
-  * coordinates: STRING
+  * latitude: FLOAT
+  * longitude: FLOAT
   * created_at: DATETIME
-  * completed_at: DATETIME
+  * ended_at: DATETIME
   * status: STRING
   * image_url: STRING
 }
@@ -34,7 +35,8 @@ entity "UserProblem" as UProblem {
   --
   - problem_set_id: INT
   * example_image_url: STRING
-  * coordinates: STRING
+  * latitude: FLOAT
+  * longitude: FLOAT
   * created_at: DATETIME
   * updated_at: DATETIME
   * status: STRING
@@ -47,7 +49,7 @@ entity "Attempt" as attempt {
   - user_problem_id: INT
   - user_id: INT
   * started_at: DATETIME
-  * completed_at: DATETIME
+  * ended_at: DATETIME
   * status: STRING
 }
 
@@ -56,7 +58,7 @@ entity "Answer" as answer {
   --
   - user_id: INT
   - user_problem_id: INT
-  * completed_at: DATETIME
+  * ended_at: DATETIME
   * image_url: STRING
 }
 
