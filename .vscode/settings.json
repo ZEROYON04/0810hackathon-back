@@ -8,11 +8,12 @@
         }
     },
     "ruff.lint.ignore": [
-        "T201", // print() の使用を許可
-        "D400", "D415", // docstringの末尾がピリオド.の強制を無効化
-        "INP001", // __init__.py の設定不要
-        "ERA001", // コメントアウトされたコードをOK
-        "RET504", // 直接returnしなくてもOK
-    ] // Linter・Formatter無効化設定
+        "T201",
+        "D400",
+        "D415",
+        "INP001",
+        "ERA001",
+        "RET504",
+    ]
 
 }
