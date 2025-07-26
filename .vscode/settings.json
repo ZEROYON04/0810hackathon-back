@@ -10,5 +10,21 @@
             "password": "password",
             "database": "mydatabase"
         }
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+        }
+    },
+    "ruff.lint.ignore": [
+        "T201",
+        "D400",
+        "D415",
+        "INP001",
+        "ERA001",
+        "RET504",
     ]
 }
