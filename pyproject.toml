@@ -17,7 +17,6 @@ dev = [
     "pytest",
     "ruff",
 ]
-<<<<<<< HEAD
 
 [tool.ruff]
 target-version = "py313"
@@ -52,5 +51,3 @@ logger-objects = ["src.library.logger.LOGGER"]
 
 [tool.ruff.lint.pylint]
 max-args = 6
-=======
->>>>>>> f175471 (ログ設定を追加)
