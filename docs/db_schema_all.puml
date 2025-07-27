@@ -1,0 +1,73 @@
+@startuml db_schema
+
+entity "User" as user {
+  * user_id: INT
+  --
+  * name: STRING
+  * password: STRING
+  * email: STRING
+}
+
+entity "RandomProblem" as RProblem {
+  * random_problem_id: INT
+  --
+  - user_id: INT
+  * latitude: FLOAT
+  * longitude: FLOAT
+  * created_at: DATETIME
+  * ended_at: DATETIME
+  * status: STRING
+  * image_url: STRING
+}
+
+entity "UserProblemSet" as PSet {
+  * problem_set_id: INT
+  --
+  - user_id: INT
+  * created_at: DATETIME
+  * updated_at: DATETIME
+  * num_challenges: INT
+  * num_completed: INT
+}
+
+entity "UserProblem" as UProblem {
+  * user_problem_id: INT
+  --
+  - problem_set_id: INT
+  * example_image_url: STRING
+  * latitude: FLOAT
+  * longitude: FLOAT
+  * created_at: DATETIME
+  * updated_at: DATETIME
+  * status: STRING
+  * image_url: STRING
+}
+
+entity "Attempt" as attempt {
+  * attempt_id: INT
+  --
+  - user_problem_id: INT
+  - user_id: INT
+  * started_at: DATETIME
+  * ended_at: DATETIME
+  * status: STRING
+}
+
+entity "Answer" as answer {
+  * answer_id: INT
+  --
+  - user_id: INT
+  - user_problem_id: INT
+  * ended_at: DATETIME
+  * image_url: STRING
+}
+
+
+user ||--o{ RProblem : challenges
+user ||--o{ PSet : creates
+user ||--o{ attempt : attempts
+attempt}o--|| PSet : challenges
+user ||--o{ answer : solves
+answer }o--|| UProblem
+PSet ||--|{ UProblem
+@enduml

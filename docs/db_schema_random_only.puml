@@ -1,0 +1,21 @@
+@startuml db_schema_random_only
+
+entity "User" as user {
+  * user_id: INT
+  --
+}
+
+entity "RandomProblem" as RProblem {
+  * random_problem_id: INT
+  --
+  * latitude: FLOAT
+  * longitude: FLOAT
+  * created_at: DATETIME
+  * ended_at: DATETIME
+  * status: STRING
+  * image_url: STRING
+}
+
+user ||--o{ RProblem : challenges
+
+@enduml

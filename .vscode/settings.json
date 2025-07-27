@@ -1,4 +1,16 @@
 {
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "Hi-IE-hackathon",
+            "username": "user",
+            "password": "password",
+            "database": "mydatabase"
+        }
+    ],
     "[python]": {
         "editor.defaultFormatter": "charliermarsh.ruff",
         "editor.formatOnSave": true,
@@ -15,5 +27,4 @@
         "ERA001",
         "RET504",
     ]
-
 }
