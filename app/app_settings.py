@@ -15,7 +15,6 @@ class Settings(BaseSettings):
         logger = logging.getLogger("uvicorn")
 
         if self.APP_ENV == "development":
-            logging.basicConfig(level=logging.DEBUG)
             Path("app/logs").mkdir(exist_ok=True)
             handler = logging.FileHandler("app/logs/app.log")
             handler.setLevel(logging.DEBUG)
