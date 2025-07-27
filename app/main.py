@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from app.app_settings import get_settings, Settings
+
+from app.app_settings import Settings, get_settings
 
 settings: Settings = get_settings()
 logger = settings.configure_logging()
