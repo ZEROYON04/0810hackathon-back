@@ -22,13 +22,15 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 ENV PATH="/app/.venv/bin:$PATH"
 
+WORKDIR /
+
 ENTRYPOINT []
 
 
 EXPOSE 8000
 
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 # 例: Gunicornと連携する場合 (本番環境推奨)
 # CMD ["gunicorn", "main:app", "--workers", "4", "--bind", "0.0.0.0:8000", "-k", "uvicorn.workers.UvicornWorker"]

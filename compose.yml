@@ -3,6 +3,9 @@ services:
     build: .
     ports:
       - "8000:8000"
+    environment:
+      APP_ENV: ${APP_ENV}
+      MAPS_API_KEY: ${MAPS_API_KEY}
   db:
     image: "postgres:17-alpine"
     restart: always

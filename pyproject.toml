@@ -9,7 +9,7 @@ dependencies = [
     "python-dotenv",
     "uvicorn[standard]",
     "sqlalchemy",
-
+    "pydantic-settings>=2.10.1",
 ]
 
 [project.optional-dependencies]
