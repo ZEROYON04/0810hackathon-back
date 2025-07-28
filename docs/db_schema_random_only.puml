@@ -10,6 +10,7 @@ entity "RandomProblem" as RProblem {
   --
   * latitude: FLOAT
   * longitude: FLOAT
+  * user_id: INT
   * created_at: DATETIME
   * ended_at: DATETIME
   * status: STRING
