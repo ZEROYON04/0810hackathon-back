@@ -1,0 +1,31 @@
+# Git and version control
+.git
+.gitignore
+
+# Development files
+.vscode
+.python-version
+.env.template
+
+# Documentation
+README.md
+docs/
+
+# Database files
+db/
+
+# Build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+
+# Temporary files
+*.tmp
+*.temp
+
+# Alternative Dockerfiles for testing
+Dockerfile.*
+requirements*.txt
