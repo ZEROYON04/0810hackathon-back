@@ -33,8 +33,6 @@ COPY --from=builder /app/.venv /app/.venv
 # Copy the application code
 COPY app /app
 
-# Copy .env file if it exists (for external environment variable configuration)
-COPY .env* ./
 
 # Set up environment to use the virtual environment
 ENV PATH="/app/.venv/bin:$PATH"
