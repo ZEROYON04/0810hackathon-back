@@ -8,7 +8,7 @@ This optimization implements a multi-stage Docker build to dramatically reduce t
 
 ### 1. Multi-Stage Build Implementation
 
-- **Stage 1 (Builder)**: Uses `ghcr.io/astral-sh/uv:python3.13-bookworm` for dependency management
+- **Stage 1 (Builder)**: Uses `ghcr.io/astral-sh/uv:python3.13-alpine` for dependency management
 - **Stage 2 (Runtime)**: Uses lightweight `python:3.13-alpine` for final runtime
 
 ### 2. Optimization Benefits
