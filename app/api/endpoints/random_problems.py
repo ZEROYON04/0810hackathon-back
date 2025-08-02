@@ -139,7 +139,7 @@ async def complete_random_problem(
     ],
 ) -> RandomProblemResponse:
     logger.debug("Completing random problem: %s", random_problem_complete)
-    logger.info("Completing random problem with ID: %s", random_problem_complete.random_problem_id)
+    logger.info("Completing random problem with ID: %s", random_problem_id)
     # 以下は仮のデータです。実際にはデータベースから取得する必要があります。
     completed_problem = RandomProblemResponse(
         user_id=random_problem_complete.user_id,
@@ -180,7 +180,7 @@ async def give_up_random_problem(
     ],
 ) -> RandomProblemResponse:
     logger.debug("Giving up random problem: %s", random_problem_given_up)
-    logger.info("Giving up random problem with ID: %s", random_problem_given_up.random_problem_id)
+    logger.info("Giving up random problem with ID: %s", random_problem_id)
     given_up_problem = RandomProblemResponse(
         user_id=random_problem_given_up.user_id,
         random_problem_id=random_problem_id,

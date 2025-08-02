@@ -16,4 +16,4 @@ app.include_router(users.router)
 async def read_root() -> dict:
     logger.debug("This is debug message test!")
     logger.info("Root endpoint accessed.")
-    return {"message": f"Application environmet is {settings.APP_ENV}!"}
+    return {"message": f"Application environment is {settings.APP_ENV}!"}
