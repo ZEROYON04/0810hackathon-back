@@ -1,11 +1,15 @@
 from fastapi import FastAPI
 
-from app.app_settings import Settings, get_settings
+from app.api.endpoints import random_problems, users
+from app.app_settings import get_settings
 
-settings: Settings = get_settings()
+settings = get_settings()
 logger = settings.configure_logging()
 
 app = FastAPI()
+
+app.include_router(random_problems.router)
+app.include_router(users.router)
 
 
 @app.get("/")
