@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from app.api.endpoints import random_problems, users
-from app.app_settings import get_settings
+from app.core.config import get_settings
 
 settings = get_settings()
 logger = settings.configure_logging()

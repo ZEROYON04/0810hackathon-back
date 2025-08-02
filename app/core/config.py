@@ -10,6 +10,7 @@ class Settings(BaseSettings):
 
     APP_ENV: str = "development"
     MAPS_API_KEY: str
+    DATABASE_URL: str
 
     def configure_logging(self) -> logging.Logger:
         logger = logging.getLogger("uvicorn")
