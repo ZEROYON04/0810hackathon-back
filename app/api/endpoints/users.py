@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from app.core.config import get_settings
 from app.schema.user import UserResponse
 
-router = APIRouter()
+router = APIRouter(prefix="/user", tags=["User"])
 
 settings = get_settings()
 logger = settings.configure_logging()

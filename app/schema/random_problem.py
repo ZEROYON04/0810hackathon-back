@@ -24,11 +24,10 @@ class RandomProblemResponse(RandomProblemBase):
 
 
 class RandomProblemComplete(RandomProblemBase):
-    random_problem_id: int
     image_url: str
     user_longitude: float
     user_latitude: float
 
 
 class RandomProblemGivenUp(RandomProblemBase):
-    random_problem_id: int
+    pass

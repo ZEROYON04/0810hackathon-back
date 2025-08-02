@@ -2,7 +2,7 @@ import datetime
 from typing import Annotated
 from zoneinfo import ZoneInfo
 
-from fastapi import APIRouter, HTTPException, Path, status
+from fastapi import APIRouter, Path, status
 
 from app.core.config import get_settings
 from app.schema.random_problem import (
@@ -15,20 +15,14 @@ from app.schema.random_problem import (
 settings = get_settings()
 logger = settings.configure_logging()
 
-router = APIRouter()
+router = APIRouter(prefix="/random-problem", tags=["Random Problem"])
 
 
 @router.get(
-    "/random-problem/{user_id}",
-    responses={
-        status.HTTP_404_NOT_FOUND: {
-            "description": "User not found",
-        },
-    },
+    "/{user_id}",
     summary="ユーザーに紐づいたランダム問題の一覧を取得するAPIエンドポイント。",
     description="""
 ユーザーIDに紐づくランダム問題の情報を返します。
-user_idはパスパラメータとボディの両方で受け取りますが、両方の値が一致する必要があります。
 現在はダミーデータを返す実装になっています。
 
 ダミーデータの仕様
@@ -41,7 +35,9 @@ user_idはパスパラメータとボディの両方で受け取りますが、�
 - image_urlは"completed"の問題にのみ画像URLを返します。
 """,
 )
-async def get_random_problem(user_id: int) -> list[RandomProblemResponse]:
+async def get_random_problem(
+    user_id: Annotated[int, Path(..., description="ID of the user to fetch random problems for")],
+) -> list[RandomProblemResponse]:
     logger.info("Fetching random problems for user_id: %s", user_id)
     problems = [
         RandomProblemResponse(
@@ -81,9 +77,9 @@ async def get_random_problem(user_id: int) -> list[RandomProblemResponse]:
 
 
 @router.post(
-    "/random-problem/create",
-    status_code=status.HTTP_201_CREATED,
+    "/create",
     summary="新しいランダム問題を作成するAPIエンドポイント。",
+    status_code=status.HTTP_201_CREATED,
     description="""
 ユーザーIDと中心座標、半径を指定して新しいランダム問題を作成します。
 現在はダミーデータを返す実装になっています。
@@ -118,7 +114,7 @@ async def create_random_problem(
 
 
 @router.patch(
-    "/random-problem/complete/{random_problem_id}",
+    "/complete/{random_problem_id}",
     summary="ランダム問題を完了するAPIエンドポイント。",
     description="""
 ユーザーがランダム問題を完了した際に呼び出されます。
@@ -142,20 +138,12 @@ async def complete_random_problem(
         Path(..., description="ID of the random problem to complete"),
     ],
 ) -> RandomProblemResponse:
-    if random_problem_complete.random_problem_id != random_problem_id:
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                "Random problem ID mismatch: "
-                f"{random_problem_complete.random_problem_id} != {random_problem_id}"
-            ),
-        )
     logger.debug("Completing random problem: %s", random_problem_complete)
     logger.info("Completing random problem with ID: %s", random_problem_complete.random_problem_id)
     # 以下は仮のデータです。実際にはデータベースから取得する必要があります。
     completed_problem = RandomProblemResponse(
         user_id=random_problem_complete.user_id,
-        random_problem_id=random_problem_complete.random_problem_id,
+        random_problem_id=random_problem_id,
         longitude=random_problem_complete.user_longitude,
         latitude=random_problem_complete.user_latitude,
         created_at=datetime.datetime(2024, 5, 1, 10, 0, 0, tzinfo=ZoneInfo("Asia/Tokyo")),
@@ -167,7 +155,7 @@ async def complete_random_problem(
 
 
 @router.patch(
-    "/random-problem/given-up/{random_problem_id}",
+    "/given-up/{random_problem_id}",
     summary="ランダム問題を諦めるAPIエンドポイント。",
     description="""
 ユーザーがランダム問題を諦めた際に呼び出されます。
@@ -191,19 +179,11 @@ async def give_up_random_problem(
         Path(..., description="ID of the random problem to give up"),
     ],
 ) -> RandomProblemResponse:
-    if random_problem_given_up.random_problem_id != random_problem_id:
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                "Random problem ID mismatch: "
-                f"{random_problem_given_up.random_problem_id} != {random_problem_id}"
-            ),
-        )
     logger.debug("Giving up random problem: %s", random_problem_given_up)
     logger.info("Giving up random problem with ID: %s", random_problem_given_up.random_problem_id)
     given_up_problem = RandomProblemResponse(
         user_id=random_problem_given_up.user_id,
-        random_problem_id=random_problem_given_up.random_problem_id,
+        random_problem_id=random_problem_id,
         longitude=135.6917,
         latitude=35.6895,
         created_at=datetime.datetime(2024, 5, 1, 10, 0, 0, tzinfo=ZoneInfo("Asia/Tokyo")),
