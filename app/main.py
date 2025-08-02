@@ -1,15 +1,19 @@
 from fastapi import FastAPI
 
-from app.core.config import Settings, get_settings
+from app.api.endpoints import random_problems, users
+from app.core.config import get_settings
 
-settings: Settings = get_settings()
+settings = get_settings()
 logger = settings.configure_logging()
 
 app = FastAPI()
 
+app.include_router(random_problems.router)
+app.include_router(users.router)
+
 
 @app.get("/")
 async def read_root() -> dict:
-    logger.debug("This is debug message!")
+    logger.debug("This is debug message test!")
     logger.info("Root endpoint accessed.")
-    return {"message": f"Hello, {settings.APP_ENV}!"}
+    return {"message": f"Application environment is {settings.APP_ENV}!"}
