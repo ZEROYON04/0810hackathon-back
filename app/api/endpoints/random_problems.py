@@ -25,6 +25,21 @@ router = APIRouter()
             "description": "User not found",
         },
     },
+    summary="ユーザーに紐づいたランダム問題の一覧を取得するAPIエンドポイント。",
+    description="""
+ユーザーIDに紐づくランダム問題の情報を返します。
+user_idはパスパラメータとボディの両方で受け取りますが、両方の値が一致する必要があります。
+現在はダミーデータを返す実装になっています。
+
+ダミーデータの仕様
+- user_idは受け取った値をそのまま返します。
+- random_problem_idは1から3までの固定値を返します。
+- longitudeとlatitudeは小数の固定値を返します。
+- created_atは現在の日時に応じて異なる値を返します。
+- ended_atは現在の日時に応じて異なる値を返します。
+- statusは"pending", "given_up", "completed"がそれぞれ１問ずつ返されます。
+- image_urlは"completed"の問題にのみ画像URLを返します。
+""",
 )
 async def get_random_problem(user_id: int) -> list[RandomProblemResponse]:
     logger.info("Fetching random problems for user_id: %s", user_id)
@@ -65,7 +80,24 @@ async def get_random_problem(user_id: int) -> list[RandomProblemResponse]:
     return problems
 
 
-@router.post("/random-problem/create", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/random-problem/create",
+    status_code=status.HTTP_201_CREATED,
+    summary="新しいランダム問題を作成するAPIエンドポイント。",
+    description="""
+ユーザーIDと中心座標、半径を指定して新しいランダム問題を作成します。
+現在はダミーデータを返す実装になっています。
+
+ダミーデータの仕様
+- user_idは受け取った値をそのまま返します。
+- random_problem_idは4を返します。
+- longitudeとlatitudeはcenter_longitudeとcenter_latitudeをそのまま返します。
+- created_atは現在の日時を返します。
+- ended_atはNoneを返します。
+- statusは"pending"を返します。
+- image_urlはNoneを返します。
+""",
+)
 async def create_random_problem(
     random_problem_create: RandomProblemCreate,
 ) -> RandomProblemResponse:
@@ -87,6 +119,21 @@ async def create_random_problem(
 
 @router.patch(
     "/random-problem/complete/{random_problem_id}",
+    summary="ランダム問題を完了するAPIエンドポイント。",
+    description="""
+ユーザーがランダム問題を完了した際に呼び出されます。
+ユーザーIDとランダム問題ID、ユーザーの位置情報、および画像URLを受け取り、完了した問題の情報を返します。
+現在はダミーデータを返す実装になっています。
+
+ダミーデータの仕様
+- user_idは受け取った値をそのまま返します。
+- random_problem_idはパスパラメータから受け取った値をそのまま返します。
+- longitudeとlatitudeはユーザーの位置情報をそのまま返します。
+- created_atは過去の固定の日時を返します。
+- ended_atは現在の日時を返します。
+- statusは"completed"を返します。
+- image_urlは受け取った値をそのまま返します。
+""",
 )
 async def complete_random_problem(
     random_problem_complete: RandomProblemComplete,
@@ -119,7 +166,24 @@ async def complete_random_problem(
     return completed_problem
 
 
-@router.patch("/random-problem/given-up/{random_problem_id}")
+@router.patch(
+    "/random-problem/given-up/{random_problem_id}",
+    summary="ランダム問題を諦めるAPIエンドポイント。",
+    description="""
+ユーザーがランダム問題を諦めた際に呼び出されます。
+ユーザーIDとランダム問題IDを受け取り、諦めた問題の情報を返します。
+現在はダミーデータを返す実装になっています。
+
+ダミーデータの仕様
+- user_idは受け取った値をそのまま返します。
+- random_problem_idはパスパラメータから受け取った値をそのまま返します。
+- longitudeとlatitudeは固定の値を返します。
+- created_atは過去の固定の日時を返します。
+- ended_atは現在の日時を返します。
+- statusは"given_up"を返します。
+- image_urlはNoneを返します。
+""",
+)
 async def give_up_random_problem(
     random_problem_given_up: RandomProblemGivenUp,
     random_problem_id: Annotated[
@@ -142,7 +206,7 @@ async def give_up_random_problem(
         random_problem_id=random_problem_given_up.random_problem_id,
         longitude=135.6917,
         latitude=35.6895,
-        created_at=datetime.datetime.now(tz=ZoneInfo("Asia/Tokyo")) - datetime.timedelta(days=30),
+        created_at=datetime.datetime(2024, 5, 1, 10, 0, 0, tzinfo=ZoneInfo("Asia/Tokyo")),
         ended_at=datetime.datetime.now(tz=ZoneInfo("Asia/Tokyo")),
         status="given_up",
         image_url=None,
