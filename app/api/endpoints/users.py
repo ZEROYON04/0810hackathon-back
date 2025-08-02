@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.app_settings import get_settings
+from app.core.config import get_settings
 from app.schema.user import UserResponse
 
 router = APIRouter()

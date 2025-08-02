@@ -4,7 +4,7 @@ from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, HTTPException, Path, status
 
-from app.app_settings import get_settings
+from app.core.config import get_settings
 from app.schema.random_problem import (
     RandomProblemComplete,
     RandomProblemCreate,
