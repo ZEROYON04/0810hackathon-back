@@ -10,8 +10,6 @@ class BaseCRUD(ABC):
         """Initialize with a database session."""
         if not isinstance(db, Session):
             raise InvalidDBSessionError
-        if db is None:
-            raise ValueError
         self.db = db
 
     @abstractmethod

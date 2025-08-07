@@ -17,10 +17,5 @@ class UserCRUD(BaseCRUD):
 
     def read(self, user_id: int) -> Users | None:
         """Read a user by their user_id."""
-        if not isinstance(user_id, int):
-            logger.error("Invalid user_id type: %s", type(user_id))
-            raise TypeError
-        if user_id <= 0:
-            logger.error("Invalid user_id value: %s", user_id)
-            raise ValueError
+        logger.debug("Reading user with ID: %s", user_id)
         return self.db.query(Users).filter(Users.user_id == user_id).first()
