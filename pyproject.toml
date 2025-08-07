@@ -55,6 +55,5 @@ max-args = 6
 
 [dependency-groups]
 dev = [
-    "psycopg2-binary>=2.9.10",
     "sqlacodegen>=3.0.0",
 ]
