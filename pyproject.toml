@@ -10,6 +10,7 @@ dependencies = [
     "uvicorn[standard]",
     "sqlalchemy",
     "pydantic-settings>=2.10.1",
+    "psycopg2-binary>=2.9.10",
 ]
 
 [project.optional-dependencies]
@@ -51,3 +52,8 @@ logger-objects = ["src.library.logger.LOGGER"]
 
 [tool.ruff.lint.pylint]
 max-args = 6
+
+[dependency-groups]
+dev = [
+    "sqlacodegen>=3.0.0",
+]

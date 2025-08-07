@@ -7,5 +7,9 @@ class UserBase(BaseModel):
     pass
 
 
+class UserCreate(UserBase):
+    pass
+
+
 class UserResponse(UserBase):
     user_id: int
