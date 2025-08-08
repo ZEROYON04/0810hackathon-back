@@ -1,6 +1,6 @@
-from typing import Annotated
+from typing import Annotated  # noqa: I001
 
-from fastapi import APIRouter, Depends, Path, status
+from fastapi import APIRouter, Depends, HTTPException, Path, status
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
@@ -11,18 +11,14 @@ from app.schema.random_problem import (
     RandomProblemGivenUp,
     RandomProblemResponse,
 )
+
 from app.service.random_problem_service import (
     complete_problem as complete_problem_service,
-)
-from app.service.random_problem_service import (
     create_random_problem as create_random_problem_service,
-)
-from app.service.random_problem_service import (
     get_problems_by_user_id,
-)
-from app.service.random_problem_service import (
     give_up_problem as give_up_problem_service,
 )
+
 
 settings = get_settings()
 logger = settings.configure_logging()
@@ -40,7 +36,17 @@ async def get_random_problem(
     db: Annotated[Session, Depends(get_db)],
 ) -> list[RandomProblemResponse]:
     logger.info("Fetching random problems for user_id: %s", user_id)
-    return get_problems_by_user_id(db, user_id)
+    try:
+        return get_problems_by_user_id(db, user_id)
+    except ValueError as e:
+        logger.exception(
+            "ユーザーID %s のランダム問題の取得中にエラーが発生しました",
+            user_id,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="指定されたユーザーのランダム問題が見つかりません。",
+        ) from e
 
 
 @router.post(
@@ -57,7 +63,14 @@ async def create_random_problem(
 ) -> RandomProblemResponse:
     logger.debug("Creating random problem: %s", random_problem_create)
     logger.info("Creating random problem for user_id: %s", random_problem_create.user_id)
-    return create_random_problem_service(db, random_problem_create)
+    try:
+        return create_random_problem_service(db, random_problem_create)
+    except ValueError as e:
+        logger.exception("ランダム問題の作成中にエラーが発生しました")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="ランダム問題の作成に失敗しました。",
+        ) from e
 
 
 @router.patch(
@@ -78,7 +91,17 @@ async def complete_random_problem(
 ) -> RandomProblemResponse:
     logger.debug("Completing random problem: %s", random_problem_complete)
     logger.info("Completing random problem with ID: %s", random_problem_id)
-    return complete_problem_service(db, random_problem_id, random_problem_complete)
+    try:
+        return complete_problem_service(db, random_problem_id, random_problem_complete)
+    except ValueError as e:
+        logger.exception(
+            "ランダム問題ID %s の完了処理中にエラーが発生しました",
+            random_problem_id,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="指定されたランダム問題が見つからないか、完了できません。",
+        ) from e
 
 
 @router.patch(
@@ -99,4 +122,14 @@ async def give_up_random_problem(
 ) -> RandomProblemResponse:
     logger.debug("Giving up random problem: %s", random_problem_given_up)
     logger.info("Giving up random problem with ID: %s", random_problem_id)
-    return give_up_problem_service(db, random_problem_id, random_problem_given_up)
+    try:
+        return give_up_problem_service(db, random_problem_id, random_problem_given_up)
+    except ValueError as e:
+        logger.exception(
+            "ランダム問題ID %s のギブアップ処理中にエラーが発生しました",
+            random_problem_id,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="指定されたランダム問題が見つからないか、更新できません。",
+        ) from e

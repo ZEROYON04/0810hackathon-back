@@ -23,7 +23,7 @@ def get_problems_by_user_id(db: Session, user_id: int) -> list[RandomProblemResp
 def create_random_problem(db: Session, problem_data: RandomProblemCreate) -> RandomProblemResponse:
     """Create a new random problem with a random coordinate within a circle."""
     # 緯度経度1度あたりの距離(km)
-    lat_per_km = 111.0
+    lat_per_km = 111.3
     lon_per_km = 91.0
 
     # 半径(km)を緯度経度の差に変換
