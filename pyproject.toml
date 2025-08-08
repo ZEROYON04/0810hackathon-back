@@ -42,6 +42,7 @@ ignore = [
     "INP001", # __init__.py の設定不要
     "ERA001", # コメントアウトされたコードをOK
     "RET504", # 直接returnしなくてもOK
+    "S311", # random.random使ってもOK
 ]
 unfixable = [
     "F401", # unused import
