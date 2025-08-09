@@ -39,4 +39,5 @@ jobs:
         run: gcloud run deploy 0810hackathon-back \
           --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/0810hackathon-back:${{ github.sha }} \
           --platform managed \
-          --region asia-northeast1
+          --region asia-northeast1 \
+          --set-env-vars MAPS_API_KEY=${{ secrets.MAPS_API_KEY }}, APP_ENV=${{ secrets.APP_ENV }}, DATABASE_URL=${{ secrets.DATABASE_URL }}
