@@ -7,6 +7,7 @@ from geopy.distance import geodesic
 from geopy.point import Point
 from sqlalchemy.orm import Session
 
+from app.core.config import get_settings
 from app.crud.random_problem_crud import RandomProblemCRUD
 from app.schema.random_problem import (
     RandomProblemComplete,
@@ -52,16 +53,13 @@ def create_random_problem(db: Session, problem_data: RandomProblemCreate) -> Ran
     return RandomProblemResponse.model_validate(problem)
 
 
-# 距離の閾値を設定(メートル単位)
-DISTANCE_THRESHOLD_METERS = 100
-
-
 def complete_problem(
     db: Session,
     problem_id: int,
     problem_data: RandomProblemComplete,
 ) -> RandomProblemResponse:
     """Complete a random problem."""
+    settings = get_settings()
     crud = RandomProblemCRUD(db)
     problem = crud.read(problem_id)
 
@@ -80,7 +78,7 @@ def complete_problem(
     distance = geodesic(user_location, problem_location).meters
 
     # 距離が閾値より大きい場合は、何もせずに現在の問題情報を返す
-    if distance > DISTANCE_THRESHOLD_METERS:
+    if distance > settings.DISTANCE_THRESHOLD_METERS:
         return RandomProblemResponse.model_validate(problem)
 
     # 距離が閾値内の場合は、問題を更新する
