@@ -1,0 +1,47 @@
+name: Alembic Migration
+
+on:
+  push:
+    branches:
+      - main  # マイグレーションを適用するブランチ
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies with uv
+        run: |
+          pip install uv
+          uv pip install -r requirements.txt
+          uv pip install alembic
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SQL Proxy
+        run: |
+          gcloud auth activate-service-account --key-file <(echo '${{ secrets.GCP_SA_KEY }}' | base64 --decode)
+          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud auth application-default login
+
+      - name: Start Cloud SQL Proxy
+        run: |
+          gcloud sql connect ${{ secrets.CLOUD_SQL_INSTANCE_NAME }} --user=${{ secrets.DB_USER }} --host=127.0.0.1 &
+
+      - name: Wait for Cloud SQL Proxy to be ready
+        run: sleep 5  # プロキシが起動するまで待機
+
+      - name: Apply Alembic migrations
+        run: |
+          alembic upgrade head --url ${{ secrets.DATABASE_URL }}
