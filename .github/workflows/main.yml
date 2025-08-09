@@ -31,7 +31,7 @@ jobs:
       # DockerイメージのビルドとArtifact Registryへのプッシュ
       - name: 'Build and push container image'
         run: |-
-          gcloud auth configure-docker
+          gcloud auth configure-docker gcr.io
           gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/0810hackathon-back:${{ github.sha }}
 
       # Cloud Runへのデプロイ
