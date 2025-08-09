@@ -1,6 +1,8 @@
 import math
 import random
 
+from geopy.distance import geodesic
+from geopy.point import Point
 from sqlalchemy.orm import Session
 
 from app.crud.random_problem_crud import RandomProblemCRUD
@@ -21,25 +23,27 @@ def get_problems_by_user_id(db: Session, user_id: int) -> list[RandomProblemResp
 
 
 def create_random_problem(db: Session, problem_data: RandomProblemCreate) -> RandomProblemResponse:
-    """Create a new random problem with a random coordinate within a circle."""
-    # 緯度経度1度あたりの距離(km)
-    lat_per_km = 111.3
-    lon_per_km = 91.0
+    """球上の円の中からランダムに一点を生成し、新しいランダムな問題を作成"""
+    center_point = Point(problem_data.center_latitude, problem_data.center_longitude)
 
-    # 半径(km)を緯度経度の差に変換
-    radius_in_lat = problem_data.radius / lat_per_km
-    radius_in_lon = problem_data.radius / lon_per_km
+    # ランダムな方位角を生成 (0-360度)
+    bearing = random.uniform(0, 360)
 
-    # 円内のランダムな点を生成
-    angle = 2 * math.pi * random.random()
-    r = random.random()  # 0-1の範囲で半径の割合をランダムに決定
-    latitude = problem_data.center_latitude + r * radius_in_lat * math.cos(angle)
-    longitude = problem_data.center_longitude + r * radius_in_lon * math.sin(angle)
+    # 逆関数サンプリング法を用いて、円内のランダムな距離を生成
+    # これにより、円の面積内で均一な点の分布が得られる
+    # 半径はkm単位
+    random_distance_km = problem_data.radius * math.sqrt(random.random())
+
+    # 中心点から指定した距離と方位角にある新しい点を計算
+    destination = geodesic(kilometers=random_distance_km).destination(
+        point=center_point,
+        bearing=bearing,
+    )
 
     db_problem_data = RandomProblemForDB(
         user_id=problem_data.user_id,
-        latitude=latitude,
-        longitude=longitude,
+        latitude=destination.latitude,
+        longitude=destination.longitude,
     )
 
     crud = RandomProblemCRUD(db)
