@@ -40,5 +40,6 @@ jobs:
           --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
           --platform managed \
           --region asia-northeast1 \
+          --allow-unauthenticated \
           --set-env-vars MAPS_API_KEY=${{ secrets.MAPS_API_KEY }},APP_ENV=${{ secrets.APP_ENV }},DATABASE_URL=${{ secrets.DATABASE_URL }} \
           --add-cloudsql-instances ${{ secrets.GCP_PROJECT_ID }}:asia-northeast1:${{ secrets.CLOUD_SQL_INSTANCE_NAME }}
