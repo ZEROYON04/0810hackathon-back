@@ -7,7 +7,6 @@ Create Date: 2025-08-09 13:09:01.312320
 """
 
 from collections.abc import Sequence
-from typing import Union
 
 import sqlalchemy as sa
 
@@ -44,7 +43,8 @@ def upgrade() -> None:
         sa.Column("ended_at", sa.DateTime(), nullable=True),
         sa.Column("image_url", sa.String(length=255), nullable=True),
         sa.CheckConstraint(
-            "status::text = ANY (ARRAY['pending'::character varying,\n            'completed'::character varying, 'given_up'::character varying]::text[])",
+            "status::text = ANY (ARRAY['pending'::character varying,\n    \
+                        'completed'::character varying, 'given_up'::character varying]::text[])",
             name="random_problems_status_check",
         ),
         sa.ForeignKeyConstraint(
