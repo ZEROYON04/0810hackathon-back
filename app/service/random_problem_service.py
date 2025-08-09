@@ -1,6 +1,8 @@
 import math
 import random
+from datetime import UTC, datetime
 
+from fastapi import HTTPException, status
 from geopy.distance import geodesic
 from geopy.point import Point
 from sqlalchemy.orm import Session
@@ -10,7 +12,6 @@ from app.schema.random_problem import (
     RandomProblemComplete,
     RandomProblemCreate,
     RandomProblemForDB,
-    RandomProblemGivenUp,
     RandomProblemResponse,
 )
 
@@ -51,27 +52,90 @@ def create_random_problem(db: Session, problem_data: RandomProblemCreate) -> Ran
     return RandomProblemResponse.model_validate(problem)
 
 
+# 距離の閾値を設定(メートル単位)
+DISTANCE_THRESHOLD_METERS = 100
+
+
 def complete_problem(
     db: Session,
     problem_id: int,
     problem_data: RandomProblemComplete,
-) -> RandomProblemResponse | None:
+) -> RandomProblemResponse:
     """Complete a random problem."""
     crud = RandomProblemCRUD(db)
-    problem = crud.update(problem_id, problem_data)
-    if problem:
+    problem = crud.read(problem_id)
+
+    if not problem:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Problem not found")
+
+    if problem.status != "pending":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Problem is already in '{problem.status}' status.",
+        )
+
+    # ユーザーの位置と問題の位置の距離を計算
+    user_location = (problem_data.user_latitude, problem_data.user_longitude)
+    problem_location = (problem.latitude, problem.longitude)
+    distance = geodesic(user_location, problem_location).meters
+
+    # 距離が閾値より大きい場合は、何もせずに現在の問題情報を返す
+    if distance > DISTANCE_THRESHOLD_METERS:
         return RandomProblemResponse.model_validate(problem)
-    return None
+
+    # 距離が閾値内の場合は、問題を更新する
+    now = datetime.now(UTC)
+    update_data = RandomProblemForDB(
+        user_id=problem.user_id,
+        longitude=problem.longitude,
+        latitude=problem.latitude,
+        status="completed",
+        completed_at=now,
+        ended_at=now,
+        image_url=problem_data.image_url,
+    )
+    updated_problem = crud.update(problem_id, update_data)
+
+    if not updated_problem:
+        # このケースは通常発生しないはずだが、念のため
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update the problem.",
+        )
+
+    return RandomProblemResponse.model_validate(updated_problem)
 
 
 def give_up_problem(
     db: Session,
     problem_id: int,
-    problem_data: RandomProblemGivenUp,
-) -> RandomProblemResponse | None:
+) -> RandomProblemResponse:
     """Give up a random problem."""
     crud = RandomProblemCRUD(db)
-    problem = crud.update(problem_id, problem_data)
-    if problem:
-        return RandomProblemResponse.model_validate(problem)
-    return None
+    problem = crud.read(problem_id)
+
+    if not problem:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Problem not found")
+
+    if problem.status != "pending":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Problem is already in '{problem.status}' status.",
+        )
+
+    update_data = RandomProblemForDB(
+        user_id=problem.user_id,
+        longitude=problem.longitude,
+        latitude=problem.latitude,
+        status="given_up",
+        ended_at=datetime.now(UTC),
+    )
+    updated_problem = crud.update(problem_id, update_data)
+
+    if not updated_problem:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update the problem.",
+        )
+
+    return RandomProblemResponse.model_validate(updated_problem)

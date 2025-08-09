@@ -8,7 +8,6 @@ from app.core.database import get_db
 from app.schema.random_problem import (
     RandomProblemComplete,
     RandomProblemCreate,
-    RandomProblemGivenUp,
     RandomProblemResponse,
 )
 
@@ -109,21 +108,19 @@ async def complete_random_problem(
     summary="ランダム問題を諦めるAPIエンドポイント。",
     description="""
 ユーザーがランダム問題を諦めた際に呼び出されます。
-ユーザーIDとランダム問題IDを受け取り、問題のステータスを「given_up」に更新します。
+ランダム問題IDを受け取り、問題のステータスを「given_up」に更新します。
 """,
 )
 async def give_up_random_problem(
-    random_problem_given_up: RandomProblemGivenUp,
     random_problem_id: Annotated[
         int,
         Path(..., description="ID of the random problem to give up"),
     ],
     db: Annotated[Session, Depends(get_db)],
 ) -> RandomProblemResponse:
-    logger.debug("Giving up random problem: %s", random_problem_given_up)
     logger.info("Giving up random problem with ID: %s", random_problem_id)
     try:
-        return give_up_problem_service(db, random_problem_id, random_problem_given_up)
+        return give_up_problem_service(db, random_problem_id)
     except ValueError as e:
         logger.exception(
             "ランダム問題ID %s のギブアップ処理中にエラーが発生しました",
