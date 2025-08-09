@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     APP_ENV: str = "development"
     MAPS_API_KEY: str
     DATABASE_URL: str
+    DISTANCE_THRESHOLD_METERS: int = 100
 
     def configure_logging(self) -> logging.Logger:
         logger = logging.getLogger("uvicorn")

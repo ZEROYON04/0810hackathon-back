@@ -1,9 +1,10 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class RandomProblemBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     user_id: int
 
 
@@ -11,6 +12,12 @@ class RandomProblemCreate(RandomProblemBase):
     center_longitude: float
     center_latitude: float
     radius: float
+
+
+class RandomProblemForDB(RandomProblemBase):
+    longitude: float
+    latitude: float
+    status: str = "pending"
 
 
 class RandomProblemResponse(RandomProblemBase):
