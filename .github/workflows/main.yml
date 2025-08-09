@@ -1,0 +1,42 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main # デプロイをトリガーする特定のブランチ名
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Workload Identity を使用して Google Cloud に認証
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: 'projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ secrets.GCP_WORKLOAD_IDENTITY_POOL }}/providers/${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      # gcloud CLIのセットアップ
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      # DockerイメージのビルドとArtifact Registryへのプッシュ
+      - name: 'Build and push container image'
+        run: |-
+          gcloud auth configure-docker
+          gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/0810hackathon-back:${{ github.sha }}
+
+      # Cloud Runへのデプロイ
+      - name: 'Deploy to Cloud Run'
+        run: gcloud run deploy 0810hackathon-back \
+          --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/0810hackathon-back:${{ github.sha }} \
+          --platform managed \
+          --region asia-northeast1
