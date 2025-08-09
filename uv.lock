@@ -23,7 +23,6 @@ dev = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "psycopg2-binary" },
     { name = "sqlacodegen" },
 ]
 
@@ -41,10 +40,7 @@ requires-dist = [
 provides-extras = ["dev"]
 
 [package.metadata.requires-dev]
-dev = [
-    { name = "psycopg2-binary", specifier = ">=2.9.10" },
-    { name = "sqlacodegen", specifier = ">=3.0.0" },
-]
+dev = [{ name = "sqlacodegen", specifier = ">=3.0.0" }]
 
 [[package]]
 name = "annotated-types"
