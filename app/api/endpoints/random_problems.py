@@ -53,7 +53,7 @@ async def get_random_problem(
     summary="新しいランダム問題を作成するAPIエンドポイント。",
     status_code=status.HTTP_201_CREATED,
     description="""
-ユーザーIDと中心座標、半径(km)を指定して、円の中からランダムな座標を持つ新しいランダム問題を作成します。
+ユーザーIDと中心座標、半径(m)を指定して、円の中からランダムな座標を持つ新しいランダム問題を作成します。
 """,
 )
 async def create_random_problem(
