@@ -33,8 +33,9 @@ def create_random_problem(db: Session, problem_data: RandomProblemCreate) -> Ran
 
     # 逆関数サンプリング法を用いて、円内のランダムな距離を生成
     # これにより、円の面積内で均一な点の分布が得られる
-    # 半径はkm単位
-    random_distance_km = problem_data.radius * math.sqrt(random.random())
+    # 半径はm単位
+    radius_km = problem_data.radius / 1000.0
+    random_distance_km = radius_km * math.sqrt(random.random())
 
     # 中心点から指定した距離と方位角にある新しい点を計算
     destination = geodesic(kilometers=random_distance_km).destination(
